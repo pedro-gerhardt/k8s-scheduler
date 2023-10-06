@@ -1,0 +1,66 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: prometheus-cluster
+kubeadmConfigPatches:
+- |-
+  kind: ClusterConfiguration
+  # configure controller-manager bind address
+  controllerManager:
+    extraArgs:
+      bind-address: 0.0.0.0
+  # configure etcd metrics listen address
+  etcd:
+    local:
+      extraArgs:
+        listen-metrics-urls: http://0.0.0.0:2381
+  # configure scheduler bind address
+  scheduler:
+    extraArgs:
+      bind-address: 0.0.0.0
+- |-
+  kind: KubeProxyConfiguration
+  # configure proxy metrics bind address
+  metricsBindAddress: 0.0.0.0
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        system-reserved: memory=7Gi,cpu=7,ephemeral-storage=45Gi
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        system-reserved: memory=7Gi,cpu=7,ephemeral-storage=45Gi
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        system-reserved: memory=7Gi,cpu=7,ephemeral-storage=45Gi
+- role: worker
+  kubeadmConfigPatches:
+  - |
+    kind: JoinConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        system-reserved: memory=7Gi,cpu=7,ephemeral-storage=45Gi
+# - role: worker
+#   kubeadmConfigPatches:
+#   - |
+#     kind: JoinConfiguration
+#     nodeRegistration:
+#       kubeletExtraArgs:
+#         system-reserved: memory=7Gi,cpu=7,ephemeral-storage=40Gi
+# - role: worker
+#   kubeadmConfigPatches:
+#   - |
+#     kind: JoinConfiguration
+#     nodeRegistration:
+#       kubeletExtraArgs:
+#         system-reserved: memory=7Gi,cpu=7,ephemeral-storage=40Gi
